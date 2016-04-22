@@ -39,7 +39,7 @@
 - Hypermedia As The Engine Of Application State
 
 ## Rest Design
-- Nouns, not Verbs
+- *Nouns, not Verbs
 - Coarse Grained, not Fine Grained
 - Architectural style for use-case scalability
 
@@ -58,8 +58,7 @@ Only two types of resources
 - Full Replacement
 ```
 PUT /applications/clientSpecifiedId
-```
-```js
+
 {
   "name": "Best App Ever",
   "description": "Awesomeness"
@@ -74,6 +73,7 @@ POST /applications
 {
   "name": "Best App Ever"
 }
+
 201 Created
 Location: https://api.company.com/applications/a1b2c3
 ```
@@ -112,7 +112,9 @@ GET /accounts/x7y8z9
   "surname": "Stark",
   ...
   "directory": {
-    "meta": { "href": "https://api.company.com/v1/accounts/x7y8z9/directories/g4h5i6}"
+    "_links": {
+      "self": { "href": ""https://api.company.com/v1/accounts/x7y8z9/directories/g4h5i6" }
+    }
   }
 }
 ```
@@ -126,7 +128,9 @@ GET /accounts/x7y8z9?expand=directory
   "surname": "Stark",
   ...
   "directory": {
-    "href": "https://api.company.com/v1/accounts/x7y8z9/directories/g4h5i6"
+    "_links": {
+      "self": { "href": "https://api.company.com/v1/accounts/x7y8z9/directories/g4h5i6" }
+    },
     "name": "Avengers",
     "creationDate": "2016-04-21T18:02:24.343Z",
     ...
@@ -143,22 +147,27 @@ GET /accounts/x7y8z9/groups?offset=0&limit=25
 
 200 OK
 {
-  "href": ".../accounts/x7y8z9/groups",
+  "_links": {
+    "self": { "href": "https://api.company.com/v1/accounts/x7y8z9/directories/g4h5i6" }
+  },
   "offset": 0,
   "limit": 25,
-  "first": { "href": ".../accounts/x7y8z9/groups?offset=0" },
+  "first": {
+      "_links": {
+        "self": { "href": ".../accounts/x7y8z9/groups?offset=0" }
+      }
+  },
   "previous": null,
-  "next": { "href": ".../accounts/x7y8z9/groups?offset=25" },
-  "last": { "href": "..."},
+  "next": { "_links": { "self": { "href": ".../accounts/x7y8z9/groups?offset=25" }}}
+  "last": { "_links": { "self": { "href": "..."}}},
   "items": [
     {
-      "href": "..."
+      "_links": {
+        "self": { "href": "..." }
+      }
     },
-    {
-      "href": "..."
-    }
+    { "_links": { "self": { "href": "..." }}}
   ]
-
 }
 ```
 
@@ -173,10 +182,10 @@ GET /groupMemberships/23lk3j2j3
 {
   "meta": { "href": ".../groupMemberships/23lk3j2j3" },
   "account": {
-    "meta": { "href": "..." }
+    "meta": { "_links": "..." }
   },
   "group": {
-    "meta": { "href": "..." }
+    "meta": { "_links": "..." }
   }
 }
 ```
@@ -186,15 +195,15 @@ Provide Many To Many on an object
 GET /accounts/x7y8z9
 200 OK
 {
-  "meta": { "href": ".../accounts/x7y8z9" },
+  "meta": { "_links": { "self": { "href": ".../accounts/x7y8z9" }}},
   "givenName": "Tony",
   "surname": "Stark",
   ...,
   "groups": {
-    "meta": { "href": ".../accounts/x7y8z9/groups" }
+    "meta": { "_links": { "self": { "href": ".../accounts/x7y8z9/groups" }}}
   },
   "groupMemberships": {
-    "meta": { "href": ".../groupMemberships?accountId=x7y8z9" }
+    "meta": { "_links": { "self": { "href": ".../groupMemberships?accountId=x7y8z9" }}}
   }
 }
 ```
